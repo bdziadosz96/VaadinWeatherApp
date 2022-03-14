@@ -1,6 +1,5 @@
 package com.example.demo.weather;
 
-import java.net.URI;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,12 +21,12 @@ public class WeatherController {
     private RestTemplate restTemplate;
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Weather> readWeatherForWarsaw() {
+    public Weather readWeatherForWarsaw() {
         Weather weather = restTemplate.getForObject(
-                "https://api.openweathermap.org/data/2.5/weather?q=Warsaw&appid=5464f369c09f3ddb1d5c75caf216a975",
+                "https://api.openweathermap.org/data/2.5/weather?q=Warsaw&appid="+apiKey,
                 Weather.class
         );
-        return ResponseEntity.ok().body(weather);
+        return weather;
     }
 }
 

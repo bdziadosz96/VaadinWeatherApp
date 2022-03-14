@@ -19,6 +19,18 @@ public class Weather {
     private String base;
     @JsonProperty(value = "visibility")
     private Double temp;
-    @JsonProperty(namespace = "sys")
+    @JsonProperty(value = "sys")
     private Sys sys;
+
+    public String getBase() {
+        return base;
+    }
+
+    public Double getTemp() {
+        return temp;
+    }
+
+    public Sys getSys() {
+        return sys;
+    }
 }
