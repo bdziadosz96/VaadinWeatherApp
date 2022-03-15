@@ -21,6 +21,12 @@ public class Weather {
     private Double temp;
     @JsonProperty(value = "sys")
     private Sys sys;
+    @JsonProperty(value = "name")
+    private String city;
+
+    public String getCity() {
+        return city;
+    }
 
     public String getBase() {
         return base;

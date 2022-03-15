@@ -7,6 +7,10 @@
 /* Example: CSS class name to center align the content . */
 .centered-content {
   margin: 0 auto;
-  max-width: 450px;
+  max-width: 250px;
+}
+
+.my-content {
+  margin-left: -170px ;
 }
 
