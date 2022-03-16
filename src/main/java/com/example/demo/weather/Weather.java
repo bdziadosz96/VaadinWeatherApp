@@ -23,6 +23,8 @@ public class Weather {
     private Sys sys;
     @JsonProperty(value = "name")
     private String city;
+    @JsonProperty(value = "main")
+    private WeatherDetails details;
 
     public String getCity() {
         return city;
@@ -38,5 +40,20 @@ public class Weather {
 
     public Sys getSys() {
         return sys;
+    }
+
+    public WeatherDetails getDetails() {
+        return details;
+    }
+
+    @Override
+    public String toString() {
+        return "Weather{" +
+                "base='" + base + '\'' +
+                ", temp=" + temp +
+                ", sys=" + sys +
+                ", city='" + city + '\'' +
+                ", details=" + details +
+                '}';
     }
 }

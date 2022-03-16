@@ -2,12 +2,19 @@ package com.example.demo;
 
 import com.example.demo.weather.Weather;
 import com.example.demo.weather.WeatherController;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 
@@ -15,34 +22,72 @@ import com.vaadin.flow.server.StreamResource;
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 public class MainView extends VerticalLayout {
-    private TextField temperature;
+    private final WeatherController controller;
+    private NumberField temperature;
+    private NumberField minTemperature;
+    private NumberField maxTemperature;
+    private TextField humidity;
+    private TextField pressure;
     private TextField state;
     private TextField cityName;
-
-    private final WeatherController controller;
+    private Binder<Weather> binder;
+    private Weather weather;
 
     public MainView(WeatherController controller) {
         this.controller = controller;
         addClassName("centered-content");
         setWidthFull();
+        binder = new Binder<>(Weather.class, true);
 
         add(new H2("Welcome to weather application"));
+        Image image = loadImageFromPath("/images/myimage.png");
+
+
+        TextField baseCity = new TextField("City");
+        baseCity.setPlaceholder("Check weather...");
+
+        HorizontalLayout controlLayout = new HorizontalLayout();
+        Button searchButton = new Button("Search", new Icon(VaadinIcon.SEARCH));
+        searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        Button resetButton = new Button("Reset", new Icon(VaadinIcon.SIGN_OUT_ALT));
+        resetButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        controlLayout.add(searchButton, resetButton);
+
+        HorizontalLayout graph = new HorizontalLayout();
+        temperature = new NumberField("Temperature");
+        state = new TextField("State");
+        cityName = new TextField("City");
+
+
+        searchButton.addClickListener(e -> checkDetailIn(controller, baseCity));
+
+        graph.addClassName("my-content");
+        graph.add(temperature, state, cityName);
+
+        add(image, baseCity, controlLayout, graph);
+    }
+
+    private void checkDetailIn(WeatherController controller, TextField baseCity) {
+        weather = controller.readWeatherForCity(baseCity.getValue());
+        try {
+            binder.writeBean(weather);
+            System.out.println(weather);
+            temperature.setValue(weather.getDetails().getTemp());
+            state.setValue(weather.getBase());
+            cityName.setValue(weather.getCity());
+        } catch (ValidationException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    //
+    private Image loadImageFromPath(String path) {
         StreamResource imageResource = new StreamResource("myimage.png",
-                () -> getClass().getResourceAsStream("/images/myimage.png"));
+                () -> getClass().getResourceAsStream(path));
         Image image = new Image(imageResource, "My Streamed Image");
 
         image.setWidth("75%");
         image.setHeight("75%");
-
-        HorizontalLayout center = new HorizontalLayout();
-        Weather weather = controller.readWeatherForWarsaw();
-        temperature = new TextField("Temperature", String.valueOf(weather.getTemp()));
-        state = new TextField("State", weather.getSys().getCountry());
-        cityName = new TextField("City", weather.getCity());
-
-        center.addClassName("my-content");
-        center.add(temperature, state, cityName);
-
-        add(image, center);
+        return image;
     }
 }

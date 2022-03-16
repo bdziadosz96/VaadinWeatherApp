@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,9 +20,9 @@ public class WeatherController {
     private RestTemplate restTemplate;
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Weather readWeatherForWarsaw() {
+    public Weather readWeatherForCity(String cityname) {
         Weather weather = restTemplate.getForObject(
-                "https://api.openweathermap.org/data/2.5/weather?q=Warsaw&appid="+apiKey,
+                "https://api.openweathermap.org/data/2.5/weather?q="+cityname+"&appid="+apiKey,
                 Weather.class
         );
         return weather;
