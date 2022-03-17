@@ -12,7 +12,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Weather {
     @JsonProperty(value = "base")
@@ -20,7 +19,7 @@ public class Weather {
     @JsonProperty(value = "visibility")
     private Double temp;
     @JsonProperty(value = "sys")
-    private Sys sys;
+    private WeatherSystem sys;
     @JsonProperty(value = "name")
     private String city;
     @JsonProperty(value = "main")
@@ -38,7 +37,7 @@ public class Weather {
         return temp;
     }
 
-    public Sys getSys() {
+    public WeatherSystem getSys() {
         return sys;
     }
 

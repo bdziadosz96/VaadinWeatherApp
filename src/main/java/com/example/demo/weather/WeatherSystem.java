@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Sys {
+public class WeatherSystem {
     @JsonProperty("type")
     private int type;
     @JsonProperty("id")
@@ -66,7 +66,7 @@ public class Sys {
 
     @Override
     public String toString() {
-        return "Sys{" +
+        return "WeatherSystem{" +
                 "type=" + type +
                 ", id=" + id +
                 ", country='" + country + '\'' +

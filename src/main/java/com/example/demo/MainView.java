@@ -1,7 +1,7 @@
 package com.example.demo;
 
 import com.example.demo.weather.Weather;
-import com.example.demo.weather.WeatherController;
+import com.example.demo.weather.WeatherApiService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -22,7 +22,7 @@ import com.vaadin.flow.server.StreamResource;
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 public class MainView extends VerticalLayout {
-    private final WeatherController controller;
+    private final WeatherApiService service;
     private NumberField temperature;
     private NumberField minTemperature;
     private NumberField maxTemperature;
@@ -33,8 +33,8 @@ public class MainView extends VerticalLayout {
     private Binder<Weather> binder;
     private Weather weather;
 
-    public MainView(WeatherController controller) {
-        this.controller = controller;
+    public MainView(WeatherApiService controller) {
+        this.service = controller;
         addClassName("centered-content");
         setWidthFull();
         binder = new Binder<>(Weather.class, true);
@@ -67,7 +67,7 @@ public class MainView extends VerticalLayout {
         add(image, baseCity, controlLayout, graph);
     }
 
-    private void checkDetailIn(WeatherController controller, TextField baseCity) {
+    private void checkDetailIn(WeatherApiService controller, TextField baseCity) {
         weather = controller.readWeatherForCity(baseCity.getValue());
         try {
             binder.writeBean(weather);
