@@ -1,4 +1,4 @@
-package com.example.demo.weather;
+package com.example.demo.weather.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,8 +13,6 @@ import lombok.ToString;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Weather {
-    @JsonProperty(value = "base")
-    private String base;
     @JsonProperty(value = "visibility")
     private Double temp;
     @JsonProperty(value = "sys")
@@ -24,13 +21,10 @@ public class Weather {
     private String city;
     @JsonProperty(value = "main")
     private WeatherDetails details;
+    @JsonProperty(va)
 
     public String getCity() {
         return city;
-    }
-
-    public String getBase() {
-        return base;
     }
 
     public Double getTemp() {

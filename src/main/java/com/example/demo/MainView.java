@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import com.example.demo.weather.Weather;
+import com.example.demo.weather.domain.Weather;
 import com.example.demo.weather.WeatherApiService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;

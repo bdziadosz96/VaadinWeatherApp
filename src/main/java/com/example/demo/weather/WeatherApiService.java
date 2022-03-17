@@ -1,5 +1,6 @@
 package com.example.demo.weather;
 
+import com.example.demo.weather.domain.Weather;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
