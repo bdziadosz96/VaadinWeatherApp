@@ -1,7 +1,7 @@
 package com.example.demo;
 
 import com.example.demo.weather.domain.Weather;
-import com.example.demo.weather.WeatherApiService;
+import com.example.demo.weather.service.WeatherApiService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -28,7 +28,7 @@ public class MainView extends VerticalLayout {
     private NumberField maxTemperature;
     private TextField humidity;
     private TextField pressure;
-    private TextField state;
+    private NumberField state;
     private TextField cityName;
     private Binder<Weather> binder;
     private Weather weather;
@@ -49,13 +49,15 @@ public class MainView extends VerticalLayout {
         HorizontalLayout controlLayout = new HorizontalLayout();
         Button searchButton = new Button("Search", new Icon(VaadinIcon.SEARCH));
         searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button resetButton = new Button("Reset", new Icon(VaadinIcon.SIGN_OUT_ALT));
+        Button resetButton = new Button("Reset", new Icon(VaadinIcon.WARNING));
         resetButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         controlLayout.add(searchButton, resetButton);
+        Image iconImage = new Image("http://openweathermap.org/img/w/10n.png","alt");
+        add(iconImage);
 
         HorizontalLayout graph = new HorizontalLayout();
         temperature = new NumberField("Temperature");
-        state = new TextField("State");
+        state = new NumberField("State");
         cityName = new TextField("City");
 
 
@@ -68,12 +70,12 @@ public class MainView extends VerticalLayout {
     }
 
     private void checkDetailIn(WeatherApiService controller, TextField baseCity) {
-        weather = controller.readWeatherForCity(baseCity.getValue());
+        weather = controller.getWeatherForCity(baseCity.getValue());
         try {
             binder.writeBean(weather);
             System.out.println(weather);
             temperature.setValue(weather.getDetails().getTemp());
-            state.setValue(weather.getBase());
+            state.setValue(weather.getDetails().getHumidity());
             cityName.setValue(weather.getCity());
         } catch (ValidationException ex) {
             ex.printStackTrace();
