@@ -1,7 +1,9 @@
 package com.example.demo;
 
 import com.example.demo.weather.domain.Weather;
-import com.example.demo.weather.service.WeatherApiService;
+import com.example.demo.weather.service.WeatherApiServiceImpl;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -17,30 +19,32 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
+import java.util.List;
 
 @Route("")
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 public class MainView extends VerticalLayout {
-    private final WeatherApiService service;
+    private final WeatherApiServiceImpl service;
+    private List<HasValue> activeComponentList;
     private NumberField temperature;
     private NumberField minTemperature;
     private NumberField maxTemperature;
-    private TextField humidity;
-    private TextField pressure;
-    private NumberField state;
+    private NumberField humidity;
+    private NumberField pressure;
+    private TextField state;
     private TextField cityName;
     private Binder<Weather> binder;
     private Weather weather;
 
-    public MainView(WeatherApiService controller) {
-        this.service = controller;
+    public MainView(WeatherApiServiceImpl service) {
+        this.service = service;
         addClassName("centered-content");
         setWidthFull();
         binder = new Binder<>(Weather.class, true);
 
         add(new H2("Welcome to weather application"));
-        Image image = loadImageFromPath("/images/myimage.png");
+        Image logo = loadImageFromPath("/images/myimage.png");
 
 
         TextField baseCity = new TextField("City");
@@ -52,37 +56,58 @@ public class MainView extends VerticalLayout {
         Button resetButton = new Button("Reset", new Icon(VaadinIcon.WARNING));
         resetButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         controlLayout.add(searchButton, resetButton);
-        Image iconImage = new Image("http://openweathermap.org/img/w/10n.png","alt");
-        add(iconImage);
+
 
         HorizontalLayout graph = new HorizontalLayout();
         temperature = new NumberField("Temperature");
-        state = new NumberField("State");
+        state = new TextField("State");
         cityName = new TextField("City");
+        humidity = new NumberField("Humidity");
+        pressure = new NumberField("Pressure");
+        minTemperature = new NumberField("Min Temperature");
+        maxTemperature = new NumberField("Max Temperature");
 
 
-        searchButton.addClickListener(e -> checkDetailIn(controller, baseCity));
 
-        graph.addClassName("my-content");
-        graph.add(temperature, state, cityName);
+        searchButton.addClickListener(e -> checkDetailIn(baseCity));
+        resetButton.addClickListener(e -> clearForm());
+        graph.setAlignItems(Alignment.CENTER);
+        graph.setDefaultVerticalComponentAlignment(Alignment.CENTER);
+        graph.addClassName("graph-content");
+        activeComponentList = List.of(temperature,state,cityName,humidity,pressure,maxTemperature,minTemperature);
+        activeComponentList
+                        .forEach(component -> component.setReadOnly(true));
+        graph.add(temperature, state, cityName, humidity, pressure, minTemperature, maxTemperature);
 
-        add(image, baseCity, controlLayout, graph);
+        add(logo, baseCity, controlLayout, graph);
     }
 
-    private void checkDetailIn(WeatherApiService controller, TextField baseCity) {
-        weather = controller.getWeatherForCity(baseCity.getValue());
+    private void clearForm() {
+        binder.getFields()
+                .forEach(HasValue::clear);
+        activeComponentList
+                        .forEach(HasValue::clear);
+        binder.setBean(null);
+    }
+
+    private void checkDetailIn(TextField baseCity) {
+        weather = this.service.getWeatherForCity(baseCity.getValue());
         try {
             binder.writeBean(weather);
             System.out.println(weather);
             temperature.setValue(weather.getDetails().getTemp());
-            state.setValue(weather.getDetails().getHumidity());
+            state.setValue(weather.getSys().getCountry());
             cityName.setValue(weather.getCity());
+            humidity.setValue(weather.getDetails().getHumidity());
+            pressure.setValue(weather.getDetails().getPressure());
+            minTemperature.setValue(weather.getDetails().getTempMin());
+            maxTemperature.setValue(weather.getDetails().getTempMax());
         } catch (ValidationException ex) {
             ex.printStackTrace();
         }
     }
 
-    //
+
     private Image loadImageFromPath(String path) {
         StreamResource imageResource = new StreamResource("myimage.png",
                 () -> getClass().getResourceAsStream(path));
