@@ -11,7 +11,6 @@ import lombok.ToString;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 class WeatherApiDetails {
     @JsonProperty("icon")
     private String iconType;

@@ -13,7 +13,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Weather {
     @JsonProperty(value = "name")
@@ -24,4 +23,10 @@ public class Weather {
     private WeatherTemperatureDetails details;
     @JsonProperty(value = "weather")
     private List<WeatherApiDetails> weathers;
+
+    @Override
+    public String toString() {
+        return "city=" + city + " " + sys +
+                " details=" + details;
+    }
 }

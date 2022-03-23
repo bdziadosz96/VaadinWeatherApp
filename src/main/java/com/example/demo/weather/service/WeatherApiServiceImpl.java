@@ -2,8 +2,6 @@ package com.example.demo.weather.service;
 
 import com.example.demo.weather.domain.Weather;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.icon.Icon;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
 @Service
-public class WeatherApiServiceImpl {
+class WeatherApiServiceImpl implements WeatherApiService{
     @Value("${api.weather.key}")
     private String apiKey;
 

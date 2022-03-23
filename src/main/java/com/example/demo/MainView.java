@@ -1,8 +1,8 @@
 package com.example.demo;
 
+import com.example.demo.email.service.EmailService;
 import com.example.demo.weather.domain.Weather;
-import com.example.demo.weather.service.WeatherApiServiceImpl;
-import com.vaadin.flow.component.Component;
+import com.example.demo.weather.service.WeatherApiService;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -20,12 +20,14 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("")
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 public class MainView extends VerticalLayout {
-    private final WeatherApiServiceImpl service;
+    private final WeatherApiService service;
+    private final EmailService emailService;
     private List<HasValue> activeComponentList;
     private NumberField temperature;
     private NumberField minTemperature;
@@ -37,8 +39,9 @@ public class MainView extends VerticalLayout {
     private Binder<Weather> binder;
     private Weather weather;
 
-    public MainView(WeatherApiServiceImpl service) {
+    public MainView(WeatherApiService service, EmailService emailService) {
         this.service = service;
+        this.emailService = emailService;
         addClassName("centered-content");
         setWidthFull();
         binder = new Binder<>(Weather.class, true);
@@ -68,11 +71,9 @@ public class MainView extends VerticalLayout {
         maxTemperature = new NumberField("Max Temperature");
 
 
-
         searchButton.addClickListener(e -> checkDetailIn(baseCity));
         resetButton.addClickListener(e -> clearForm());
         graph.setAlignItems(Alignment.CENTER);
-        graph.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         graph.addClassName("graph-content");
         activeComponentList = List.of(temperature,state,cityName,humidity,pressure,maxTemperature,minTemperature);
         activeComponentList
@@ -92,6 +93,7 @@ public class MainView extends VerticalLayout {
 
     private void checkDetailIn(TextField baseCity) {
         weather = this.service.getWeatherForCity(baseCity.getValue());
+        emailService.sendEmail("bartlomiej.dziadosz96@gmail.com",weather.toString());
         try {
             binder.writeBean(weather);
             System.out.println(weather);

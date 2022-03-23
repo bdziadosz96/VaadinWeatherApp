@@ -11,7 +11,6 @@ import lombok.ToString;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class WeatherTemperatureDetails {
     @JsonProperty("temp")
     private double temp;
@@ -25,4 +24,14 @@ public class WeatherTemperatureDetails {
     private double pressure;
     @JsonProperty("humidity")
     private double humidity;
+
+    @Override
+    public String toString() {
+        return "temp=" + temp +
+                ", feelsLike=" + feelsLike +
+                ", tempMin=" + tempMin +
+                ", tempMax=" + tempMax +
+                ", pressure=" + pressure +
+                ", humidity=" + humidity;
+    }
 }

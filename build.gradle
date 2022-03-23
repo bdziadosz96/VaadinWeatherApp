@@ -3,9 +3,11 @@ buildscript {
         maven { setUrl("https://maven.vaadin.com/vaadin-prereleases") }
     }
 }
+
 plugins {
 	id 'org.springframework.boot' version '2.6.4'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'application'
 	id 'java'
 	id 'com.vaadin'
 }
@@ -29,13 +31,15 @@ configurations {
 }
 
 dependencies {
-	implementation('com.vaadin:vaadin-spring-boot-starter')
+	implementation'com.vaadin:vaadin-spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
 }
 
 dependencyManagement {

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 
 @Getter
@@ -22,4 +23,9 @@ public class WeatherSystemDetails {
     private int sunrise;
     @JsonProperty("sunset")
     private int sunset;
+
+    @Override
+    public String toString() {
+        return " country= " + country;
+    }
 }
