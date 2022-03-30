@@ -1,0 +1,19 @@
+services:
+  postgres:
+    container_name: postgres_vaadin
+    image: postgres:12.4
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD:
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+  pgadmin:
+    container_name: pgadmin_vaadin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD:
+    ports:
+      - "5050:80"
+    restart: unless-stopped
