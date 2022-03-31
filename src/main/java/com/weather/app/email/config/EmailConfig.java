@@ -1,4 +1,4 @@
-package com.example.demo.email.config;
+package com.weather.app.email.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

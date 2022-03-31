@@ -1,14 +1,10 @@
-package com.example.demo;
+package com.weather.app;
 
-import com.example.demo.email.service.EmailService;
-import com.example.demo.weather.domain.Weather;
-import com.example.demo.weather.service.WeatherApiService;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
@@ -22,6 +18,10 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
+import com.weather.app.email.service.EmailService;
+import com.weather.app.weather.domain.Weather;
+import com.weather.app.weather.domain.WeatherTemperatureDetails;
+import com.weather.app.weather.service.WeatherApiService;
 import java.util.List;
 
 @Route("")
@@ -31,6 +31,7 @@ public class MainView extends VerticalLayout {
     private final WeatherApiService service;
     private final EmailService emailService;
     private List<HasValue> activeComponentList;
+    private EmailField emailField;
     private NumberField temperature;
     private NumberField minTemperature;
     private NumberField maxTemperature;
@@ -38,30 +39,28 @@ public class MainView extends VerticalLayout {
     private NumberField pressure;
     private TextField state;
     private TextField cityName;
-    private Binder<Weather> binder;
+    private TextField baseCity;
+    private Dialog emailDialog;
     private Weather weather;
     private Button searchButton;
     private Button resetButton;
     private Button emailSubscriptionButton;
-    private EmailField emailField;
-    private TextField baseCity;
-    private Dialog emailDialog;
+    private Binder<Weather> binder;
 
-    public MainView(WeatherApiService service, EmailService emailService) {
+    public MainView(final WeatherApiService service, final EmailService emailService) {
         this.service = service;
         this.emailService = emailService;
 
         initMainLayout();
 
-        Image logo = loadImageFromPath("/images/myimage.png");
+        final Image logo = loadImageFromPath("/images/myimage.png");
 
         baseCity = initCitySearchField();
 
-        HorizontalLayout controlLayout = initControlLayout();
+        final HorizontalLayout controlLayout = initControlLayout();
 
-        HorizontalLayout graph = initGraphLayout();
+        final HorizontalLayout graph = initGraphLayout();
 
-        emailDialog = initEmailLayout();
         configureListeners();
         configureGraph(graph);
         add(logo, baseCity, controlLayout, graph);
@@ -70,14 +69,40 @@ public class MainView extends VerticalLayout {
     private Dialog initEmailLayout() {
         emailDialog = new Dialog();
         VerticalLayout emailLayout = new VerticalLayout();
+        configureEmailLayout(emailLayout);
+        emailLayout.add(emailField);
+
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        configureButtonLayout(buttonLayout);
+
+        emailDialog.add(emailLayout, buttonLayout);
+        emailDialog.open();
+        return emailDialog;
+    }
+
+    private void configureButtonLayout(HorizontalLayout buttonLayout) {
+        Button sendButton = configureSendButton();
+        Button closeButton = configureCloseButton();
+        buttonLayout.add(sendButton, closeButton);
+        buttonLayout.setClassName("email-button-content");
+        sendButton.addClickListener(e -> emailService.sendEmail(emailField.getValue(),
+                weather.toString()));
+    }
+
+    private Button configureCloseButton() {
+        Button close = new Button("Close");
+        close.addClickListener(click -> emailDialog.close());
+        return close;
+    }
+
+    private Button configureSendButton() {
+        return new Button("Send");
+    }
+
+    private void configureEmailLayout(VerticalLayout emailLayout) {
         emailLayout.add(new H2("Type your email address"));
         emailField = new EmailField("Write your email here");
         emailField.addClassName("email-content");
-        emailLayout.add(emailField);
-        emailLayout.add(new Button("Send"));
-        emailLayout.add(new Button("Close"));
-        emailDialog.add(emailLayout);
-        return emailDialog;
     }
 
     private void configureListeners() {
@@ -86,12 +111,12 @@ public class MainView extends VerticalLayout {
         emailSubscriptionButton.addClickListener(click -> emailDialog.open());
     }
 
-    private void configureGraph(HorizontalLayout graph) {
+    private void configureGraph(final HorizontalLayout graph) {
         graph.setAlignItems(Alignment.CENTER);
         graph.addClassName("graph-content");
-        activeComponentList = List.of(temperature,state,cityName,humidity,pressure,maxTemperature,minTemperature);
+        activeComponentList = List.of(temperature, state, cityName, humidity, pressure, maxTemperature, minTemperature);
         activeComponentList
-                        .forEach(component -> component.setReadOnly(true));
+                .forEach(component -> component.setReadOnly(true));
         graph.add(temperature, state, cityName, humidity, pressure, minTemperature, maxTemperature);
     }
 
@@ -108,7 +133,7 @@ public class MainView extends VerticalLayout {
     }
 
     private TextField initCitySearchField() {
-        TextField baseCity = new TextField("City");
+        baseCity = new TextField("City");
         baseCity.setPlaceholder("Check weather in...");
         return baseCity;
     }
@@ -120,7 +145,8 @@ public class MainView extends VerticalLayout {
         searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         resetButton = new Button("Reset", new Icon(VaadinIcon.BACKSPACE));
         resetButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        emailSubscriptionButton = new Button("Email details", new Icon(VaadinIcon.MAILBOX));
+        emailSubscriptionButton = new Button("Email details", new Icon(VaadinIcon.MAILBOX),
+                click -> emailDialog = initEmailLayout());
         emailSubscriptionButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         controlLayout.add(searchButton, resetButton, emailSubscriptionButton);
         return controlLayout;
@@ -138,29 +164,31 @@ public class MainView extends VerticalLayout {
         binder.getFields()
                 .forEach(HasValue::clear);
         activeComponentList
-                        .forEach(HasValue::clear);
+                .forEach(HasValue::clear);
+        baseCity.clear();
         binder.setBean(null);
     }
 
-    private void checkDetailIn(TextField baseCity) {
-        weather = this.service.getWeatherForCity(baseCity.getValue());
+    private void checkDetailIn(final TextField baseCity) {
+        weather = this.service.findWeatherForCity(baseCity.getValue());
+        WeatherTemperatureDetails weatherDetails = weather.getDetails();
         try {
             binder.writeBean(weather);
             System.out.println(weather);
-            temperature.setValue(weather.getDetails().getTemp());
+            temperature.setValue(weatherDetails.getTemp());
             state.setValue(weather.getSys().getCountry());
             cityName.setValue(weather.getCity());
-            humidity.setValue(weather.getDetails().getHumidity());
-            pressure.setValue(weather.getDetails().getPressure());
-            minTemperature.setValue(weather.getDetails().getTempMin());
-            maxTemperature.setValue(weather.getDetails().getTempMax());
+            humidity.setValue(weatherDetails.getHumidity());
+            pressure.setValue(weatherDetails.getPressure());
+            minTemperature.setValue(weatherDetails.getTempMin());
+            maxTemperature.setValue(weatherDetails.getTempMax());
         } catch (ValidationException ex) {
             ex.printStackTrace();
         }
     }
 
 
-    private Image loadImageFromPath(String path) {
+    private Image loadImageFromPath(final String path) {
         StreamResource imageResource = new StreamResource("myimage.png",
                 () -> getClass().getResourceAsStream(path));
         Image image = new Image(imageResource, "My Streamed Image");

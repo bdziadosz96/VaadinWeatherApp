@@ -1,4 +1,4 @@
-package com.example.demo.weather.domain;
+package com.weather.app.weather.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

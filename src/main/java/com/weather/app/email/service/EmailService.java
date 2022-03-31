@@ -1,4 +1,4 @@
-package com.example.demo.email.service;
+package com.weather.app.email.service;
 
 public interface EmailService {
     void sendEmail(String toEmail,

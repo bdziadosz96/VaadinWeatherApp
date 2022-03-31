@@ -1,6 +1,6 @@
-package com.example.demo.weather.service;
+package com.weather.app.weather.service;
 
-import com.example.demo.weather.domain.Weather;
+import com.weather.app.weather.domain.Weather;
 import com.vaadin.flow.component.html.Image;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,22 +10,20 @@ import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
 @Service
-class WeatherApiServiceImpl implements WeatherApiService{
+class WeatherApiServiceImpl implements WeatherApiService {
+    private final RestTemplate restTemplate;
     @Value("${api.weather.key}")
     private String apiKey;
 
-    private final RestTemplate restTemplate;
-
-
-    public Weather getWeatherForCity(String city){
+    public Weather findWeatherForCity(String city) {
         return restTemplate.getForObject(
                 "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey,
                 Weather.class
         );
     }
 
-    public Image getIconFromResponse(String iconName){
+    public Image getIconFromResponse(String iconName) {
         String URI = String.format("http://openweathermap.org/img/w/%s.png", iconName);
-        return new Image(URI,"alt");
+        return new Image(URI, "alt");
     }
 }

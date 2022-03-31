@@ -1,9 +1,10 @@
-package com.example.demo.weather.service;
+package com.weather.app.weather.service;
 
-import com.example.demo.weather.domain.Weather;
+import com.weather.app.weather.domain.Weather;
 import com.vaadin.flow.component.html.Image;
 
 public interface WeatherApiService {
-    Weather getWeatherForCity(String city);
+    Weather findWeatherForCity(String city);
+
     Image getIconFromResponse(String iconName);
 }

@@ -1,4 +1,4 @@
-package com.example.demo.weather.domain;
+package com.weather.app.weather.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -27,11 +27,11 @@ public class WeatherTemperatureDetails {
 
     @Override
     public String toString() {
-        return "temp=" + temp +
-                ", feelsLike=" + feelsLike +
-                ", tempMin=" + tempMin +
-                ", tempMax=" + tempMax +
-                ", pressure=" + pressure +
-                ", humidity=" + humidity;
+        return "temp=" + temp
+                + ", feelsLike=" + feelsLike
+                + ", tempMin=" + tempMin
+                + ", tempMax=" + tempMax
+                + ", pressure=" + pressure
+                + ", humidity=" + humidity;
     }
 }

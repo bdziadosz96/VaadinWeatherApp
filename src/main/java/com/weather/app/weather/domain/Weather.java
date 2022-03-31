@@ -1,4 +1,4 @@
-package com.example.demo.weather.domain;
+package com.weather.app.weather.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,7 +25,7 @@ public class Weather {
 
     @Override
     public String toString() {
-        return "city=" + city + " " + sys +
-                " details=" + details;
+        return "city=" + city + " " + sys
+                + " details=" + details;
     }
 }

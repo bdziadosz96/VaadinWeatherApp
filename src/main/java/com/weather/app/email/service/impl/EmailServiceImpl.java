@@ -1,7 +1,7 @@
-package com.example.demo.email.service.impl;
+package com.weather.app.email.service.impl;
 
-import com.example.demo.email.config.EmailConfig;
-import com.example.demo.email.service.EmailService;
+import com.weather.app.email.config.EmailConfig;
+import com.weather.app.email.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
