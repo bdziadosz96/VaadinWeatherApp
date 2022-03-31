@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -145,7 +146,7 @@ public class MainView extends VerticalLayout {
         searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         resetButton = new Button("Reset", new Icon(VaadinIcon.BACKSPACE));
         resetButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        emailSubscriptionButton = new Button("Email details", new Icon(VaadinIcon.MAILBOX),
+        emailSubscriptionButton = new Button("Send Email", new Icon(VaadinIcon.MAILBOX),
                 click -> emailDialog = initEmailLayout());
         emailSubscriptionButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         controlLayout.add(searchButton, resetButton, emailSubscriptionButton);
@@ -170,20 +171,26 @@ public class MainView extends VerticalLayout {
     }
 
     private void checkDetailIn(final TextField baseCity) {
-        weather = this.service.findWeatherForCity(baseCity.getValue());
-        WeatherTemperatureDetails weatherDetails = weather.getDetails();
-        try {
-            binder.writeBean(weather);
-            System.out.println(weather);
-            temperature.setValue(weatherDetails.getTemp());
-            state.setValue(weather.getSys().getCountry());
-            cityName.setValue(weather.getCity());
-            humidity.setValue(weatherDetails.getHumidity());
-            pressure.setValue(weatherDetails.getPressure());
-            minTemperature.setValue(weatherDetails.getTempMin());
-            maxTemperature.setValue(weatherDetails.getTempMax());
-        } catch (ValidationException ex) {
-            ex.printStackTrace();
+        String city = baseCity.getValue();
+        if (city.isEmpty()) {
+            Notification.show("City cannot be empty!",500, Notification.Position.MIDDLE);
+        }
+        else {
+            weather = this.service.findWeatherForCity(city);
+            WeatherTemperatureDetails weatherDetails = weather.getDetails();
+            try {
+                binder.writeBean(weather);
+                System.out.println(weather);
+                temperature.setValue(weatherDetails.getTemp());
+                state.setValue(weather.getSys().getCountry());
+                cityName.setValue(weather.getCity());
+                humidity.setValue(weatherDetails.getHumidity());
+                pressure.setValue(weatherDetails.getPressure());
+                minTemperature.setValue(weatherDetails.getTempMin());
+                maxTemperature.setValue(weatherDetails.getTempMax());
+            } catch (ValidationException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
