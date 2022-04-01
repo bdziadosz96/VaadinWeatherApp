@@ -19,18 +19,19 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
-import com.weather.app.email.service.EmailService;
+import com.weather.app.email.service.EmailServiceRequest;
 import com.weather.app.weather.domain.Weather;
 import com.weather.app.weather.domain.WeatherTemperatureDetails;
 import com.weather.app.weather.service.WeatherApiService;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 @Route("")
 @CssImport("./styles/shared-styles.css")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
 public class MainView extends VerticalLayout {
     private final WeatherApiService service;
-    private final EmailService emailService;
+    private final EmailServiceRequest emailService;
     private List<HasValue> activeComponentList;
     private EmailField emailField;
     private NumberField temperature;
@@ -48,7 +49,7 @@ public class MainView extends VerticalLayout {
     private Button emailSubscriptionButton;
     private Binder<Weather> binder;
 
-    public MainView(final WeatherApiService service, final EmailService emailService) {
+    public MainView(final WeatherApiService service, final EmailServiceRequest emailService) {
         this.service = service;
         this.emailService = emailService;
 
@@ -86,8 +87,14 @@ public class MainView extends VerticalLayout {
         Button closeButton = configureCloseButton();
         buttonLayout.add(sendButton, closeButton);
         buttonLayout.setClassName("email-button-content");
-        sendButton.addClickListener(e -> emailService.sendEmail(emailField.getValue(),
-                weather.toString()));
+        sendButton.addClickListener(click -> handleEmailRequest());
+    }
+
+    private void handleEmailRequest() {
+        String addressEmail = emailField.getValue();
+        String weatherBody = weather.toString();
+        String cityName = weather.getCity();
+        emailService.sendEmailCommand(addressEmail, weatherBody);
     }
 
     private Button configureCloseButton() {
@@ -172,7 +179,7 @@ public class MainView extends VerticalLayout {
 
     private void checkDetailIn(final TextField baseCity) {
         String city = baseCity.getValue();
-        if (city.isEmpty()) {
+        if (StringUtils.isBlank(city) || StringUtils.isEmpty(city)) {
             Notification.show("City cannot be empty!",500, Notification.Position.MIDDLE);
         }
         else {

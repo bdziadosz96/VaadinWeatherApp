@@ -21,9 +21,4 @@ class WeatherApiServiceImpl implements WeatherApiService {
                 Weather.class
         );
     }
-
-    public Image getIconFromResponse(String iconName) {
-        String URI = String.format("http://openweathermap.org/img/w/%s.png", iconName);
-        return new Image(URI, "alt");
-    }
 }

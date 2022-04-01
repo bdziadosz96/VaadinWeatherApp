@@ -20,8 +20,6 @@ public class Weather {
     private WeatherSystemDetails sys;
     @JsonProperty(value = "main")
     private WeatherTemperatureDetails details;
-    @JsonProperty(value = "weather")
-    private List<WeatherApiDetails> weathers;
 
     @Override
     public String toString() {

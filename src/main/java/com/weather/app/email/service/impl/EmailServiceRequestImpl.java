@@ -1,7 +1,8 @@
 package com.weather.app.email.service.impl;
 
 import com.weather.app.email.config.EmailConfig;
-import com.weather.app.email.service.EmailService;
+import com.weather.app.email.repository.EmailHistoryRepository;
+import com.weather.app.email.service.EmailServiceRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,12 +10,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-class EmailServiceImpl implements EmailService {
+class EmailServiceRequestImpl implements EmailServiceRequest {
     private final JavaMailSender javaMailSender;
     private final EmailConfig emailConfig;
+    private final EmailHistoryRepository repository;
 
     @Override
-    public void sendEmail(String toEmail, String body) {
+    public void sendEmailCommand(String toEmail, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(toEmail);

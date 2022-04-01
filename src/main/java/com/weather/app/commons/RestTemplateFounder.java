@@ -1,4 +1,4 @@
-package com.weather.app.config;
+package com.weather.app.commons;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
