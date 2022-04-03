@@ -19,6 +19,8 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
+import com.weather.app.email.domain.EmailRequestStatus;
+import com.weather.app.email.service.EmailHistoryService;
 import com.weather.app.email.service.EmailServiceRequest;
 import com.weather.app.weather.domain.Weather;
 import com.weather.app.weather.domain.WeatherTemperatureDetails;
@@ -32,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 public class MainView extends VerticalLayout {
     private final WeatherApiService service;
     private final EmailServiceRequest emailService;
+    private final EmailHistoryService historyService;
     private List<HasValue> activeComponentList;
     private EmailField emailField;
     private NumberField temperature;
@@ -48,10 +51,12 @@ public class MainView extends VerticalLayout {
     private Button resetButton;
     private Button emailSubscriptionButton;
     private Binder<Weather> binder;
+    private EmailRequestStatus emailRequestStatus;
 
-    public MainView(final WeatherApiService service, final EmailServiceRequest emailService) {
+    public MainView(final WeatherApiService service, final EmailServiceRequest emailService, EmailHistoryService historyService) {
         this.service = service;
         this.emailService = emailService;
+        this.historyService = historyService;
 
         initMainLayout();
 
@@ -93,8 +98,17 @@ public class MainView extends VerticalLayout {
     private void handleEmailRequest() {
         String addressEmail = emailField.getValue();
         String weatherBody = weather.toString();
-        String cityName = weather.getCity();
-        emailService.sendEmailCommand(addressEmail, weatherBody);
+        var status = emailService.sendEmailCommand(addressEmail, weatherBody);
+        handleRequestStatus(status, addressEmail);
+    }
+
+    private void handleRequestStatus(EmailRequestStatus status, String addressEmail) {
+        String city = cityName.getValue();
+        if (StringUtils.equals(status.getCode(),"SUCCESS")) {
+            historyService.saveRequestToDatabase(addressEmail,city);
+        } else {
+            Notification.show("We cannot proceed your request",1000, Notification.Position.MIDDLE);
+        }
     }
 
     private Button configureCloseButton() {
@@ -180,7 +194,7 @@ public class MainView extends VerticalLayout {
     private void checkDetailIn(final TextField baseCity) {
         String city = baseCity.getValue();
         if (StringUtils.isBlank(city) || StringUtils.isEmpty(city)) {
-            Notification.show("City cannot be empty!",500, Notification.Position.MIDDLE);
+            Notification.show("City cannot be empty!",1000, Notification.Position.MIDDLE);
         }
         else {
             weather = this.service.findWeatherForCity(city);
