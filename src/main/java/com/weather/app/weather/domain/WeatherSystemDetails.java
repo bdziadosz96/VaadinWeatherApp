@@ -13,15 +13,15 @@ import lombok.Setter;
 @NoArgsConstructor
 public class WeatherSystemDetails {
     @JsonProperty("type")
-    private int type;
+    private Integer type;
     @JsonProperty("id")
-    private int id;
+    private Integer id;
     @JsonProperty("country")
     private String country;
     @JsonProperty("sunrise")
-    private int sunrise;
+    private Integer sunrise;
     @JsonProperty("sunset")
-    private int sunset;
+    private Integer sunset;
 
     @Override
     public String toString() {

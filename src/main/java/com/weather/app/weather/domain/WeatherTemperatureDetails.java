@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
@@ -13,17 +12,17 @@ import lombok.ToString;
 @NoArgsConstructor
 public class WeatherTemperatureDetails {
     @JsonProperty("temp")
-    private double temp;
+    private Double temp;
     @JsonProperty("feels_like")
-    private double feelsLike;
+    private Double feelsLike;
     @JsonProperty("temp_min")
-    private double tempMin;
+    private Double tempMin;
     @JsonProperty("temp_max")
-    private double tempMax;
+    private Double tempMax;
     @JsonProperty("pressure")
-    private double pressure;
+    private Double pressure;
     @JsonProperty("humidity")
-    private double humidity;
+    private Double humidity;
 
     @Override
     public String toString() {
@@ -33,5 +32,16 @@ public class WeatherTemperatureDetails {
                 + ", tempMax=" + tempMax
                 + ", pressure=" + pressure
                 + ", humidity=" + humidity;
+    }
+
+    public void convertValuesToCelsius() {
+        this.temp = convertToCelcius(temp);
+        this.tempMin = convertToCelcius(tempMin);
+        this.tempMax = convertToCelcius(tempMax);
+    }
+
+    private Double convertToCelcius(Double value) {
+        value -= 273.15;
+        return value;
     }
 }

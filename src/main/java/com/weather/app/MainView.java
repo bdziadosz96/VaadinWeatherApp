@@ -3,6 +3,7 @@ package com.weather.app;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
@@ -52,6 +53,7 @@ public class MainView extends VerticalLayout {
     private Button emailSubscriptionButton;
     private Binder<Weather> binder;
     private EmailRequestStatus emailRequestStatus;
+    private Checkbox temperatureConverter;
 
     public MainView(final WeatherApiService service, final EmailServiceRequest emailService, EmailHistoryService historyService) {
         this.service = service;
@@ -163,6 +165,7 @@ public class MainView extends VerticalLayout {
     private HorizontalLayout initControlLayout() {
         HorizontalLayout controlLayout = new HorizontalLayout();
         controlLayout.addClassName("control-content");
+        temperatureConverter = new Checkbox("[°C]");
         searchButton = new Button("Search", new Icon(VaadinIcon.SEARCH));
         searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         resetButton = new Button("Reset", new Icon(VaadinIcon.BACKSPACE));
@@ -170,7 +173,7 @@ public class MainView extends VerticalLayout {
         emailSubscriptionButton = new Button("Send Email", new Icon(VaadinIcon.MAILBOX),
                 click -> emailDialog = initEmailLayout());
         emailSubscriptionButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        controlLayout.add(searchButton, resetButton, emailSubscriptionButton);
+        controlLayout.add(temperatureConverter, searchButton, resetButton, emailSubscriptionButton);
         return controlLayout;
     }
 
@@ -199,9 +202,9 @@ public class MainView extends VerticalLayout {
         else {
             weather = this.service.findWeatherForCity(city);
             WeatherTemperatureDetails weatherDetails = weather.getDetails();
+            weatherDetails.convertValuesToCelsius();
             try {
                 binder.writeBean(weather);
-                System.out.println(weather);
                 temperature.setValue(weatherDetails.getTemp());
                 state.setValue(weather.getSys().getCountry());
                 cityName.setValue(weather.getCity());
