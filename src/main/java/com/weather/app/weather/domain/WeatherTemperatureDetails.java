@@ -35,13 +35,13 @@ public class WeatherTemperatureDetails {
     }
 
     public void convertValuesToCelsius() {
-        this.temp = convertToCelcius(temp);
-        this.tempMin = convertToCelcius(tempMin);
-        this.tempMax = convertToCelcius(tempMax);
+        this.temp = convertToCelsius(temp);
+        this.tempMin = convertToCelsius(tempMin);
+        this.tempMax = convertToCelsius(tempMax);
     }
 
-    private Double convertToCelcius(Double value) {
-        value -= 273.15;
+    private Double convertToCelsius(Double value) {
+        value = (double) Math.round(value - 273.15);
         return value;
     }
 }

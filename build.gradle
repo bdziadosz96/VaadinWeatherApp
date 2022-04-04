@@ -7,16 +7,15 @@ buildscript {
 plugins {
 	id 'org.springframework.boot' version '2.6.4'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id "com.github.spotbugs" version "4.2.0"
 	id 'application'
 	id 'java'
 	id 'com.vaadin'
+	id 'jacoco'
 }
 
-defaultTasks("clean", "build")
-
-group = 'com.example'
+group = 'com.weather.app'
 version = '1.0.0-SNAPSHOT'
-sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
@@ -54,6 +53,20 @@ dependencyManagement {
 	}
 }
 
+jacocoTestReport{
+	dependsOn(test)
+	reports {
+		xml.enabled(true)
+		csv.enabled(true)
+		html.enabled(true)
+	}
+}
 test {
 	useJUnitPlatform()
+	finalizedBy(jacocoTestReport)
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
