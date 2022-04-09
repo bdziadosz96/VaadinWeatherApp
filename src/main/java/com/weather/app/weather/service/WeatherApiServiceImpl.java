@@ -1,7 +1,6 @@
 package com.weather.app.weather.service;
 
 import com.weather.app.weather.domain.Weather;
-import com.vaadin.flow.component.html.Image;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

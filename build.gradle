@@ -7,7 +7,6 @@ buildscript {
 plugins {
 	id 'org.springframework.boot' version '2.6.4'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-	id "com.github.spotbugs" version "5.0.6"
 	id 'application'
 	id 'java'
 	id 'com.vaadin'
@@ -45,7 +44,6 @@ dependencies {
 	}
 
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
-	implementation 'org.slf4j:slf4j-api:2.0.0-alpha7'
 }
 
 dependencyManagement {
