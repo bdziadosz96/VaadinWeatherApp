@@ -27,6 +27,7 @@ import com.weather.app.weather.domain.Weather;
 import com.weather.app.weather.domain.WeatherTemperatureDetails;
 import com.weather.app.weather.service.WeatherApiService;
 import java.util.List;
+import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 @Route("")
@@ -36,7 +37,7 @@ public class MainView extends VerticalLayout {
     private final WeatherApiService service;
     private final EmailServiceRequest emailService;
     private final EmailHistoryService historyService;
-    private List<HasValue> activeComponentList;
+    private List<? extends HasValue<? extends HasValue.ValueChangeEvent<?>,?>> activeComponentList;
     private EmailField emailField;
     private NumberField temperature;
     private NumberField minTemperature;
@@ -71,7 +72,9 @@ public class MainView extends VerticalLayout {
         final HorizontalLayout graph = initGraphLayout();
 
         configureListeners();
+
         configureGraph(graph);
+
         add(logo, baseCity, controlLayout, graph);
     }
 
@@ -98,10 +101,14 @@ public class MainView extends VerticalLayout {
     }
 
     private void handleEmailRequest() {
-        String addressEmail = emailField.getValue();
-        String weatherBody = weather.toString();
-        var status = emailService.sendEmailCommand(addressEmail, weatherBody);
-        handleRequestStatus(status, addressEmail);
+        if (Objects.nonNull(weather)) {
+            String addressEmail = emailField.getValue();
+            String weatherBody = weather.toString();
+            var status = emailService.sendEmailCommand(addressEmail, weatherBody);
+            handleRequestStatus(status, addressEmail);
+        } else {
+            Notification.show("Email cannot be proceed for unknown city", 1000, Notification.Position.BOTTOM_CENTER);
+        }
     }
 
     private void handleRequestStatus(EmailRequestStatus status, String addressEmail) {
@@ -109,7 +116,7 @@ public class MainView extends VerticalLayout {
         if (StringUtils.equals(status.getCode(),"SUCCESS")) {
             historyService.saveRequestToDatabase(addressEmail,city);
         } else {
-            Notification.show("We cannot proceed your request",1000, Notification.Position.MIDDLE);
+            Notification.show("We cannot proceed your request",1000, Notification.Position.BOTTOM_CENTER);
         }
     }
 
@@ -166,6 +173,7 @@ public class MainView extends VerticalLayout {
         HorizontalLayout controlLayout = new HorizontalLayout();
         controlLayout.addClassName("control-content");
         temperatureConverter = new Checkbox("[°C]");
+        temperatureConverter.setValue(true);
         searchButton = new Button("Search", new Icon(VaadinIcon.SEARCH));
         searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         resetButton = new Button("Reset", new Icon(VaadinIcon.BACKSPACE));
@@ -191,31 +199,35 @@ public class MainView extends VerticalLayout {
         activeComponentList
                 .forEach(HasValue::clear);
         baseCity.clear();
+        weather = null;
         binder.setBean(null);
     }
 
     private void checkDetailIn(final TextField baseCity) {
         String city = baseCity.getValue();
         if (StringUtils.isBlank(city) || StringUtils.isEmpty(city)) {
-            Notification.show("City cannot be empty!",1000, Notification.Position.MIDDLE);
+            Notification.show("City cannot be empty!",1000, Notification.Position.BOTTOM_CENTER);
         }
         else {
-            weather = this.service.findWeatherForCity(city);
+            weather = this.service.findWeatherForCity(city,temperatureConverter.getValue());
             WeatherTemperatureDetails weatherDetails = weather.getDetails();
-            weatherDetails.convertValuesToCelsius();
             try {
-                binder.writeBean(weather);
-                temperature.setValue(weatherDetails.getTemp());
-                state.setValue(weather.getSys().getCountry());
-                cityName.setValue(weather.getCity());
-                humidity.setValue(weatherDetails.getHumidity());
-                pressure.setValue(weatherDetails.getPressure());
-                minTemperature.setValue(weatherDetails.getTempMin());
-                maxTemperature.setValue(weatherDetails.getTempMax());
+                bindFields(weatherDetails);
             } catch (ValidationException ex) {
                 ex.printStackTrace();
             }
         }
+    }
+
+    private void bindFields(final WeatherTemperatureDetails weatherDetails) throws ValidationException {
+        binder.writeBean(weather);
+        temperature.setValue(weatherDetails.getTemp());
+        state.setValue(weather.getSys().getCountry());
+        cityName.setValue(weather.getCity());
+        humidity.setValue(weatherDetails.getHumidity());
+        pressure.setValue(weatherDetails.getPressure());
+        minTemperature.setValue(weatherDetails.getTempMin());
+        maxTemperature.setValue(weatherDetails.getTempMax());
     }
 
 

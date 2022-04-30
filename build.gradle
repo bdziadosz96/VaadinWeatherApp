@@ -65,6 +65,11 @@ test {
 	finalizedBy(jacocoTestReport)
 }
 
+
+compileJava {
+	options.compilerArgs += ['--enable-preview']
+}
+
 java {
 	sourceCompatibility = JavaVersion.VERSION_17
 	targetCompatibility = JavaVersion.VERSION_17

@@ -4,7 +4,7 @@ services:
     image: postgres:12.4
     environment:
       POSTGRES_USER: admin
-      POSTGRES_PASSWORD:
+      POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
     restart: unless-stopped
@@ -13,7 +13,7 @@ services:
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: user@domain.com
-      PGADMIN_DEFAULT_PASSWORD:
+      PGADMIN_DEFAULT_PASSWORD: password
     ports:
       - "5050:80"
     restart: unless-stopped
