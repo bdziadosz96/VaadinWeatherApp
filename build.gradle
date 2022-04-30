@@ -29,19 +29,20 @@ configurations {
 }
 
 dependencies {
-	implementation 'com.vaadin:vaadin-spring-boot-starter:23.0.2'
-	implementation 'org.springframework.boot:spring-boot-starter-mail:2.6.5'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools:2.6.5'
+	implementation 'com.vaadin:vaadin-spring-boot-starter:23.0.6'
+	implementation 'org.springframework.boot:spring-boot-starter-mail:2.6.7'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools:2.6.7'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.5'
-	implementation 'org.postgresql:postgresql:42.3.3'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.7'
+	implementation 'org.postgresql:postgresql:42.3.4'
 
-	compileOnly 'org.projectlombok:lombok:1.18.22'
+	compileOnly 'org.projectlombok:lombok:1.18.24'
 	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
-	testImplementation('org.springframework.boot:spring-boot-starter-test:2.6.5') {
+	testImplementation('org.springframework.boot:spring-boot-starter-test:2.6.7') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+	testImplementation 'com.h2database:h2:2.1.212'
 
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
