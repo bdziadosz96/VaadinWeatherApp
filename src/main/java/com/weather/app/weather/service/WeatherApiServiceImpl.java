@@ -15,7 +15,7 @@ class WeatherApiServiceImpl implements WeatherApiService {
     private String apiKey;
 
     public Weather findWeatherForCity(String city, Boolean inMetric) {
-        StringBuilder requestBuilder = new StringBuilder();
+        StringBuilder requestBuilder;
         requestBuilder = new StringBuilder("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey);
         if (inMetric) {
             requestBuilder.append("&units=metric");
