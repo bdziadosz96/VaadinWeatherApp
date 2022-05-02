@@ -14,7 +14,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-class WeatherApiTest {
+class WeatherApiServiceTest {
 
     String dummyKey = "dummyKey";
     String apiKey = "";
